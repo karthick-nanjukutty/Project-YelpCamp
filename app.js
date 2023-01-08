@@ -21,7 +21,20 @@ app.get ('/campgrounds' , async (req,res) =>{
     const campgrounds = await YelpCamp.find();
     res.render('campgrounds/index', {campgrounds})
 })
+/*Get New Form for New Request */
+app.get ('/campgrounds/new' , (req,res) =>{
+    res.render('campgrounds/new')
+})
 
+/*After Receiving the request from new form add to Db */
+
+app.post ('/campgrounds' , async(req,res) =>{
+    const {campground} = req.body
+    const newCampground = await new YelpCamp(campground).save();
+    res.redirect(`/campgrounds/${newCampground._id}`)
+
+})
+/* Show Campground Detail*/
 app.get ('/campgrounds/:id' , async (req,res) =>{
     const {id} = req.params;
     const campground = await YelpCamp.findById(id)
