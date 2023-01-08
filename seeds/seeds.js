@@ -18,7 +18,7 @@ async function main () {
 }
 
 /* Inserting Single data */
-
+/*
 const p = new YelpCamp({
     title: 'Canada Canopy',
     price: 80,
@@ -29,4 +29,32 @@ const p = new YelpCamp({
 }).catch (err =>{
     console.log('First Product Add Failed' , err)
 })
+*/
 
+const seedDb = async () =>{
+    await YelpCamp.deleteMany();
+    for (i=0; i<100; i++) {
+        const random1000 = Math.floor(Math.random()*1000);
+        const priceRandom = Math.floor (Math.random()*30);
+        const sampleTitle = (array) =>{
+            array[Math.floor(Math.random()*array.length)]
+        }
+        const yelpBulk = await new YelpCamp ({
+          title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
+          location: `${cities[random1000].city},${cities[random1000].state}`,
+          image: 'https://source.unsplash.com/collection/3846912',
+          price: priceRandom
+        }).save().then (res =>{
+            console.log('Many products Added' , res)
+        }). catch (err =>{
+            console.log("Many Products Add Failed" , err)
+
+        })
+    }
+}
+/* Closing Connection of Mongo*/
+seedDb().then (() =>{
+    mongoose.connection.close();
+}).catch (e =>{
+    console.log("Seeds Error" , e)
+})
