@@ -40,6 +40,20 @@ app.get ('/campgrounds/:id' , async (req,res) =>{
     const campground = await YelpCamp.findById(id)
     res.render('campgrounds/show',{campground})
 })
+/*Get Campgroung Details to Edit*/
+app.get ('/campgrounds/:id/edit' , async(req,res) =>{
+    const {id} = req.params;
+    const campground = await YelpCamp.findById(id)
+    res.render ('campgrounds/edit' , {campground})
+})
+/*Update Campground details using the id and method Override */
+
+app.put ('/campgrounds/:id' , async(req,res) =>{
+    const {id} = req.params;
+    const {campground} = req.body;
+    const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
+    res.redirect(`/campgrounds/${updatedCampground._id}`)
+})
 app.listen(3012,()=>{
     console.log("Welcome to Yelcamp on port 3012");
 })
