@@ -12,10 +12,16 @@
    <h2><%= campground.location %> </h2>
    <!-- <img src="<%= campground.image %> " alt=""> -->
    <!-- <p><%= campground.description %> </p> -->
-
+   
    <footer>
+   
        <a href="/campgrounds/<%= campground._id%>/edit ">Edit Camp</a>
        <a href="/campgrounds"> All Campgrounds</a>
+       <p>
+        <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+        <button>Remove Camp</button>
+        </form>
+    </p>
      
    </footer>
     

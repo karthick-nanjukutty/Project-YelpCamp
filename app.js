@@ -54,6 +54,15 @@ app.put ('/campgrounds/:id' , async(req,res) =>{
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
     res.redirect(`/campgrounds/${updatedCampground._id}`)
 })
+
+/* Delete/Remove Playgound */
+
+app.delete ('/campgrounds/:id' , async (req,res) =>{
+    console.log('Deleting Campgrounds')
+    const { id } = req.params;
+    const deleteCampground = await YelpCamp.findByIdAndDelete(id);
+    res.redirect('/campgrounds')
+})
 app.listen(3012,()=>{
     console.log("Welcome to Yelcamp on port 3012");
 })
