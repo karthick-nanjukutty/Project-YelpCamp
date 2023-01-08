@@ -9,7 +9,8 @@ app.set('view engine', 'ejs');
 var methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 const mongoose = require('mongoose');
-const YelpCamp = require('./models/campground')
+const YelpCamp = require('./models/campground');
+const { findById } = require('./models/campground');
 
 app.get ('/', (req,res) =>{
     res.send('Welcome to HomePage')
@@ -19,7 +20,12 @@ app.get ('/', (req,res) =>{
 app.get ('/campgrounds' , async (req,res) =>{
     const campgrounds = await YelpCamp.find();
     res.render('campgrounds/index', {campgrounds})
+})
 
+app.get ('/campgrounds/:id' , async (req,res) =>{
+    const {id} = req.params;
+    const campground = await YelpCamp.findById(id)
+    res.render('campgrounds/show',{campground})
 })
 app.listen(3012,()=>{
     console.log("Welcome to Yelcamp on port 3012");
