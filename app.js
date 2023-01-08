@@ -15,8 +15,14 @@ app.get ('/', (req,res) =>{
     res.send('Welcome to HomePage')
 })
 
-app.listen(3009,()=>{
-    console.log("Welcome to Yelcamp on port 3009");
+/*Get All Campground Details */
+app.get ('/campgrounds' , async (req,res) =>{
+    const campgrounds = await YelpCamp.find();
+    res.render('campgrounds/index', {campgrounds})
+
+})
+app.listen(3012,()=>{
+    console.log("Welcome to Yelcamp on port 3012");
 })
 
 

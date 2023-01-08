@@ -31,14 +31,15 @@ const p = new YelpCamp({
 })
 */
 
+const sampleTitle = array => array[Math.floor(Math.random()*array.length)]
+
+
 const seedDb = async () =>{
     await YelpCamp.deleteMany();
     for (i=0; i<100; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const priceRandom = Math.floor (Math.random()*30);
-        const sampleTitle = (array) =>{
-            array[Math.floor(Math.random()*array.length)]
-        }
+        
         const yelpBulk = await new YelpCamp ({
           title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
