@@ -11,6 +11,23 @@ app.use(methodOverride('_method'));
 const mongoose = require('mongoose');
 const YelpCamp = require('./models/campground');
 const { findById } = require('./models/campground');
+const engine = require('ejs-mate');
+app.engine('ejs', engine);
+
+main().catch(err => console.log('OH NO ERROR', err));
+async function main () {
+    try {
+        await mongoose.connect('mongodb://127.0.0.1:27017/campyelp');
+    console.log("Mongo connection Open for YelpCamp New")
+
+    }
+
+    catch (err) {
+        console.log  ("Oh No Error!!! ", err)
+    }
+    
+}
+
 
 app.get ('/', (req,res) =>{
     res.send('Welcome to HomePage')
@@ -63,22 +80,9 @@ app.delete ('/campgrounds/:id' , async (req,res) =>{
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
     res.redirect('/campgrounds')
 })
-app.listen(3012,()=>{
-    console.log("Welcome to Yelcamp on port 3012");
+app.listen(3015,()=>{
+    console.log("Welcome to Yelcamp on port 3015");
 })
 
 
 
-main().catch(err => console.log('OH NO ERROR', err));
-async function main () {
-    try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/campyelp');
-    console.log("Mongo connection Open for YelpCamp New")
-
-    }
-
-    catch (err) {
-        console.log  ("Oh No Error!!! ", err)
-    }
-    
-}
