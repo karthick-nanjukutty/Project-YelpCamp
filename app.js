@@ -50,13 +50,26 @@ app.get ('/campgrounds/new' , (req,res) =>{
 
 app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
     
+    
+    //if (!campground) throw new ExpressError('This is a Bad Request', 400)
+    const campgroundSchema =  Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required().min(0),
+        }).required()
+    })
     const {campground} = req.body
-    if (!campground) throw new ExpressError('This is a Bad Request', 400)
-    else {
+    //const joiResult = campgroundSchema.validate({campground})
+    const joiResult = campgroundSchema.validate(req.body);
+    console.log ("Joi result is ", joiResult)
+    if (joiResult.error) {
+        throw new ExpressError(joiResult.error.details, 400)
+    }
+     
         const newCampground = await new YelpCamp(campground).save();
     res.redirect(`/campgrounds/${newCampground._id}`)
 
-    }
+    
     
 }))
 /* Show Campground Detail*/
