@@ -17,6 +17,32 @@ const Joi = require('joi')
 const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
 
+const validateCampground = (req,res,next) =>{
+    const campgroundSchema =  Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required().min(0),
+            location : Joi.string().required(),
+            image: Joi.string().required(),
+            description: Joi.string().required()
+
+        }).required()
+    })
+    
+    //const joiResult = campgroundSchema.validate({campground})
+    const { error }= campgroundSchema.validate(req.body);
+    
+    if (error) {
+        console.log ("Joi result is ", error)
+        const message = error.details.map( element => element.message).join(',')
+        throw new ExpressError(message, 400)
+    }
+    else {
+        next()
+    }
+
+}
+
 main().catch(err => console.log('OH NO ERROR', err));
 async function main () {
     try {
@@ -48,30 +74,10 @@ app.get ('/campgrounds/new' , (req,res) =>{
 
 /*After Receiving the request from new form add to Db */
 
-app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
-    
-    
+app.post ('/campgrounds' , validateCampground, wrapAsync(async(req,res,next) =>{
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
-    const campgroundSchema =  Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            location : Joi.string().required(),
-            image: Joi.string().required(),
-            description: Joi.string().required()
-
-        }).required()
-    })
     const {campground} = req.body
-    //const joiResult = campgroundSchema.validate({campground})
-    const { error }= campgroundSchema.validate(req.body);
-    console.log ("Joi result is ", error)
-    if (error) {
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-     
-        const newCampground = await new YelpCamp(campground).save();
+    const newCampground = await new YelpCamp(campground).save();
     res.redirect(`/campgrounds/${newCampground._id}`)
 
     
@@ -91,7 +97,7 @@ app.get ('/campgrounds/:id/edit' , wrapAsync(async(req,res) =>{
 }))
 /*Update Campground details using the id and method Override */
 
-app.put ('/campgrounds/:id' , wrapAsync(async(req,res) =>{
+app.put ('/campgrounds/:id' , validateCampground, wrapAsync(async(req,res) =>{
     const {id} = req.params;
     const {campground} = req.body;
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
