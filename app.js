@@ -50,9 +50,13 @@ app.get ('/campgrounds/new' , (req,res) =>{
 app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
     
     const {campground} = req.body
-    const newCampground = await new YelpCamp(campground).save();
+    if (!campground) throw new ExpressError('This is a Bad Request', 400)
+    else {
+        const newCampground = await new YelpCamp(campground).save();
     res.redirect(`/campgrounds/${newCampground._id}`)
 
+    }
+    
 }))
 /* Show Campground Detail*/
 app.get ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
@@ -84,7 +88,17 @@ app.delete ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     res.redirect('/campgrounds')
 }))
 
+app.all('*', (req,res,next) =>{
+    //res.send('404')
+    next ( new ExpressError('Page Not Found', 404))
+})
+
 app.use ((err,req,res,next) =>{
+    console.log("the error is " ,err)
+    console.log("the error message  is " ,err.message)
+    console.log("the error statis is " ,err.status)
+    const { status = 500 ,message = 'Something wrong'} = err;
+    res.status(status).send(message)
     res.send( 'OH Boy!! Something went wrong')
 })
 app.listen(3015,()=>{
