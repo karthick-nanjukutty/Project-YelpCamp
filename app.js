@@ -36,10 +36,10 @@ app.get ('/', (req,res) =>{
 })
 
 /*Get All Campground Details */
-app.get ('/campgrounds' , async (req,res) =>{
+app.get ('/campgrounds' , wrapAsync(async (req,res) =>{
     const campgrounds = await YelpCamp.find();
     res.render('campgrounds/index', {campgrounds})
-})
+}))
 /*Get New Form for New Request */
 app.get ('/campgrounds/new' , (req,res) =>{
     res.render('campgrounds/new')
@@ -55,34 +55,34 @@ app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
 
 }))
 /* Show Campground Detail*/
-app.get ('/campgrounds/:id' , async (req,res) =>{
+app.get ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     const {id} = req.params;
     const campground = await YelpCamp.findById(id)
     res.render('campgrounds/show',{campground})
-})
+}))
 /*Get Campgroung Details to Edit*/
-app.get ('/campgrounds/:id/edit' , async(req,res) =>{
+app.get ('/campgrounds/:id/edit' , wrapAsync(async(req,res) =>{
     const {id} = req.params;
     const campground = await YelpCamp.findById(id)
     res.render ('campgrounds/edit' , {campground})
-})
+}))
 /*Update Campground details using the id and method Override */
 
-app.put ('/campgrounds/:id' , async(req,res) =>{
+app.put ('/campgrounds/:id' , wrapAsync(async(req,res) =>{
     const {id} = req.params;
     const {campground} = req.body;
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
     res.redirect(`/campgrounds/${updatedCampground._id}`)
-})
+}))
 
 /* Delete/Remove Playgound */
 
-app.delete ('/campgrounds/:id' , async (req,res) =>{
+app.delete ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     console.log('Deleting Campgrounds')
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
     res.redirect('/campgrounds')
-})
+}))
 
 app.use ((err,req,res,next) =>{
     res.send( 'OH Boy!! Something went wrong')
