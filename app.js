@@ -16,18 +16,11 @@ app.engine('ejs', engine);
 const Joi = require('joi')
 const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
+const {campgroundSchema} = require('./joischema/joicampgroundschema')
 
 const validateCampground = (req,res,next) =>{
-    const campgroundSchema =  Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            location : Joi.string().required(),
-            image: Joi.string().required(),
-            description: Joi.string().required()
-
-        }).required()
-    })
+    
+   
     
     //const joiResult = campgroundSchema.validate({campground})
     const { error }= campgroundSchema.validate(req.body);
