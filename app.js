@@ -13,6 +13,7 @@ const YelpCamp = require('./models/campground');
 const { findById } = require('./models/campground');
 const engine = require('ejs-mate');
 app.engine('ejs', engine);
+const Joi = require('joi')
 const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
 
