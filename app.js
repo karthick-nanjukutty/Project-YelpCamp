@@ -13,6 +13,8 @@ const YelpCamp = require('./models/campground');
 const { findById } = require('./models/campground');
 const engine = require('ejs-mate');
 app.engine('ejs', engine);
+const ExpressError = require('./utils/expresserror')
+const wrapAsync = require('./utils/catchAsync')
 
 main().catch(err => console.log('OH NO ERROR', err));
 async function main () {
@@ -45,17 +47,13 @@ app.get ('/campgrounds/new' , (req,res) =>{
 
 /*After Receiving the request from new form add to Db */
 
-app.post ('/campgrounds' , async(req,res,next) =>{
-    try {
+app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
+    
     const {campground} = req.body
     const newCampground = await new YelpCamp(campground).save();
     res.redirect(`/campgrounds/${newCampground._id}`)
-}
-catch (e) {
-    
-    next (e)
-}
-})
+
+}))
 /* Show Campground Detail*/
 app.get ('/campgrounds/:id' , async (req,res) =>{
     const {id} = req.params;
@@ -87,7 +85,7 @@ app.delete ('/campgrounds/:id' , async (req,res) =>{
 })
 
 app.use ((err,req,res,next) =>{
-    res.send( err,'OH Boy!! Something went wrong')
+    res.send( 'OH Boy!! Something went wrong')
 })
 app.listen(3015,()=>{
     console.log("Welcome to Yelcamp on port 3015");
