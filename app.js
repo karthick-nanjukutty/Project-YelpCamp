@@ -45,11 +45,16 @@ app.get ('/campgrounds/new' , (req,res) =>{
 
 /*After Receiving the request from new form add to Db */
 
-app.post ('/campgrounds' , async(req,res) =>{
+app.post ('/campgrounds' , async(req,res,next) =>{
+    try {
     const {campground} = req.body
     const newCampground = await new YelpCamp(campground).save();
     res.redirect(`/campgrounds/${newCampground._id}`)
-
+}
+catch (e) {
+    
+    next (e)
+}
 })
 /* Show Campground Detail*/
 app.get ('/campgrounds/:id' , async (req,res) =>{
@@ -79,6 +84,10 @@ app.delete ('/campgrounds/:id' , async (req,res) =>{
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
     res.redirect('/campgrounds')
+})
+
+app.use ((err,req,res,next) =>{
+    res.send( err,'OH Boy!! Something went wrong')
 })
 app.listen(3015,()=>{
     console.log("Welcome to Yelcamp on port 3015");
