@@ -94,13 +94,14 @@ app.all('*', (req,res,next) =>{
 })
 
 app.use ((err,req,res,next) =>{
-    console.log("the error is " ,err)
+    console.log("the error stack is " ,err.stack)
     console.log("the error message  is " ,err.message)
     console.log("the error statis is " ,err.status)
+  //if (!err.message) err.message = 'Something is wrong Oh No!'
     const { status = 500 ,message = 'Something wrong'} = err;
     //res.status(status).send(message)
-    res.status(status).render('error')
-    res.send( 'OH Boy!! Something went wrong')
+    res.status(status).render('error', { err })
+    //res.send( 'OH Boy!! Something went wrong')
 })
 app.listen(3015,()=>{
     console.log("Welcome to Yelcamp on port 3015");
