@@ -98,7 +98,8 @@ app.use ((err,req,res,next) =>{
     console.log("the error message  is " ,err.message)
     console.log("the error statis is " ,err.status)
     const { status = 500 ,message = 'Something wrong'} = err;
-    res.status(status).send(message)
+    //res.status(status).send(message)
+    res.status(status).render('error')
     res.send( 'OH Boy!! Something went wrong')
 })
 app.listen(3015,()=>{
