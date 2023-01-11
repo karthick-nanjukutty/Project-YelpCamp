@@ -10,7 +10,7 @@ var methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 const mongoose = require('mongoose');
 const YelpCamp = require('./models/campground');
-const { findById } = require('./models/campground');
+const { findById, collection } = require('./models/campground');
 const engine = require('ejs-mate');
 app.engine('ejs', engine);
 const Joi = require('joi')
@@ -60,10 +60,11 @@ app.post ('/campgrounds' , wrapAsync(async(req,res,next) =>{
     })
     const {campground} = req.body
     //const joiResult = campgroundSchema.validate({campground})
-    const joiResult = campgroundSchema.validate(req.body);
-    console.log ("Joi result is ", joiResult)
-    if (joiResult.error) {
-        throw new ExpressError(joiResult.error.details, 400)
+    const { error }= campgroundSchema.validate(req.body);
+    console.log ("Joi result is ", error)
+    if (error) {
+        const message = error.details.map( element => element.message).join(',')
+        throw new ExpressError(message, 400)
     }
      
         const newCampground = await new YelpCamp(campground).save();
