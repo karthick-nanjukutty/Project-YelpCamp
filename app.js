@@ -17,7 +17,7 @@ const Joi = require('joi')
 const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
 const Review = require('./models/review')
-const {campgroundSchema} = require('./joischema/joicampgroundschema')
+const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
 
 const validateCampground = (req,res,next) =>{
     
@@ -35,6 +35,18 @@ const validateCampground = (req,res,next) =>{
         next()
     }
 
+}
+
+const validateReview = (req,res,next) =>{
+    const {error} = reviewSchema.validate(req.body);
+    if (error) {
+        console.log ("Joi result is for REview Schema ", error)
+        const message = error.details.map( element => element.message).join(',')
+        throw new ExpressError(message, 400)
+    }
+    else {
+        next()
+    }
 }
 
 main().catch(err => console.log('OH NO ERROR', err));
@@ -80,7 +92,8 @@ app.post ('/campgrounds' , validateCampground, wrapAsync(async(req,res,next) =>{
 /* Show Campground Detail*/
 app.get ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id)
+    const campground = await YelpCamp.findById(id).populate('reviews')
+    console.log(campground)
     res.render('campgrounds/show',{campground})
 }))
 /*Get Campgroung Details to Edit*/
@@ -107,7 +120,7 @@ app.delete ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     res.redirect('/campgrounds')
 }))
 // POST / Review ==> /camground/:id/reviews
-app.post('/camgrounds/:id/reviews' , wrapAsync(async (req,res) =>{
+app.post('/camgrounds/:id/reviews' , validateReview, wrapAsync(async (req,res) =>{
     const {id} = req.params
     const campground = await YelpCamp.findById(id)
     const review = new Review (req.body.review)
