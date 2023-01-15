@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const review = require('./review')
 
 const yelpSchema = new Schema ({
 
@@ -23,7 +24,12 @@ const yelpSchema = new Schema ({
 
     image: {
         type: String
-    }
+    },
+
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }]
 
 
 }); 
