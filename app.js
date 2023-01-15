@@ -131,6 +131,15 @@ app.post('/camgrounds/:id/reviews' , validateReview, wrapAsync(async (req,res) =
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
+app.delete('/campgrounds/:id/reviews/:reviewId' ,wrapAsync(async (req,res) =>{
+    const {id, reviewId} = req.params
+    await YelpCamp.findByIdAndUpdate(id, {$pull : { reviews: reviewId}})
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`)
+
+// res.send("Delete My review")
+}))
+
 app.all('*', (req,res,next) =>{
     //res.send('404')
     next ( new ExpressError('Page Not Found', 404))
