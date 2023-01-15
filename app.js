@@ -16,6 +16,7 @@ app.engine('ejs', engine);
 const Joi = require('joi')
 const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
+const Review = require('./models/review')
 const {campgroundSchema} = require('./joischema/joicampgroundschema')
 
 const validateCampground = (req,res,next) =>{
@@ -105,6 +106,17 @@ app.delete ('/campgrounds/:id' , wrapAsync(async (req,res) =>{
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
     res.redirect('/campgrounds')
 }))
+// POST / Review ==> /camground/:id/reviews
+app.post('/camgrounds/:id/reviews' , wrapAsync(async (req,res) =>{
+    const {id} = req.params
+    const campground = await YelpCamp.findById(id)
+    const review = new Review (req.body.review)
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    //res.send('You made it')
+    res.redirect(`/campgrounds/${campground._id}`)
+}))
 
 app.all('*', (req,res,next) =>{
     //res.send('404')
@@ -127,3 +139,4 @@ app.listen(3015,()=>{
 
 
 
+// POST / Review ==> /camground/:id/reviews
