@@ -29,6 +29,7 @@ router.post('/' , validateReview, wrapAsync(async (req,res) =>{
     await review.save();
     await campground.save();
     //res.send('You made it')
+    req.flash('Success' , 'Created new Review')
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
@@ -36,6 +37,7 @@ router.delete('/:reviewId' ,wrapAsync(async (req,res) =>{
     const {id, reviewId} = req.params
     await YelpCamp.findByIdAndUpdate(id, {$pull : { reviews: reviewId}})
     await Review.findByIdAndDelete(reviewId);
+    req.flash('Success' , 'Successfully Delted Review')
     res.redirect(`/campgrounds/${id}`)
 
 // res.send("Delete My review")

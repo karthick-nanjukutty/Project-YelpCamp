@@ -66,6 +66,7 @@ router.put ('/:id' , validateCampground, wrapAsync(async(req,res) =>{
     const {id} = req.params;
     const {campground} = req.body;
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
+    req.flash('success' ,'Successfully Updated Campground')
     res.redirect(`/campgrounds/${updatedCampground._id}`)
 }))
 
@@ -75,6 +76,7 @@ router.delete ('/:id' , wrapAsync(async (req,res) =>{
     console.log('Deleting Campgrounds')
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
+    req.flash('Success' , 'Successfully Deleted Campground')
     res.redirect('/campgrounds')
 }))
 
