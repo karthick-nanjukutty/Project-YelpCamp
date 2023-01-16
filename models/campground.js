@@ -33,6 +33,17 @@ const yelpSchema = new Schema ({
 
 
 }); 
+yelpSchema.post('findOneAndDelete' , async ( doc) =>{
+    if (doc){
+        console.log( "DELTED", doc ," is DELETED")
+        await review.deleteMany({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+   
+})
 
 const YelpCamp = mongoose.model('YelpCamp', yelpSchema);
 module.exports = YelpCamp
