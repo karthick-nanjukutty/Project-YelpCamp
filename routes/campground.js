@@ -38,8 +38,10 @@ router.get ('/new' , (req,res) =>{
 
 router.post ('/' , validateCampground, wrapAsync(async(req,res,next) =>{
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
+
     const {campground} = req.body
     const newCampground = await new YelpCamp(campground).save();
+    req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
 
     

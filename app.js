@@ -21,9 +21,7 @@ const campgroundsRoutes = require('./routes/campground')
 const reviewRoutes = require('./routes/reviews')
 const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
 const session = require('express-session')
-
-app.use('/campgrounds', campgroundsRoutes)
-app.use('/campgrounds/:id/reviews', reviewRoutes)
+const flash = require('connect-flash')
 
 app.use(express.static(path.join(__dirname, 'public')))
 const sessionConfig = {
@@ -37,7 +35,24 @@ const sessionConfig = {
     }
 
 }
-app.use(session(sessionConfig))
+
+app.use(session(sessionConfig));
+
+app.use(flash());
+
+app.use((req,res,next) =>{
+    res.locals.success = req.flash('success'); 
+    res.locals.errors = req.flash('error')
+    next ();
+})
+
+app.use('/campgrounds', campgroundsRoutes)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
+
+
+
+
+
 
 
 
