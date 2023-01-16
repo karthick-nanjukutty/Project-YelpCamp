@@ -18,23 +18,14 @@ const ExpressError = require('./utils/expresserror')
 const wrapAsync = require('./utils/catchAsync')
 const Review = require('./models/review')
 const campgroundsRoutes = require('./routes/campground')
+const reviewRoutes = require('./routes/reviews')
 const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
 
 app.use('/campgrounds', campgroundsRoutes)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
 
 
 
-const validateReview = (req,res,next) =>{
-    const {error} = reviewSchema.validate(req.body);
-    if (error) {
-        console.log ("Joi result is for REview Schema ", error)
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-    else {
-        next()
-    }
-}
 
 main().catch(err => console.log('OH NO ERROR', err));
 async function main () {
@@ -57,26 +48,7 @@ app.get ('/', (req,res) =>{
 
 /*Get All Campground Details */
 
-// POST / Review ==> /camground/:id/reviews
-app.post('/camgrounds/:id/reviews' , validateReview, wrapAsync(async (req,res) =>{
-    const {id} = req.params
-    const campground = await YelpCamp.findById(id)
-    const review = new Review (req.body.review)
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-    //res.send('You made it')
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
 
-app.delete('/campgrounds/:id/reviews/:reviewId' ,wrapAsync(async (req,res) =>{
-    const {id, reviewId} = req.params
-    await YelpCamp.findByIdAndUpdate(id, {$pull : { reviews: reviewId}})
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/campgrounds/${id}`)
-
-// res.send("Delete My review")
-}))
 
 app.all('*', (req,res,next) =>{
     //res.send('404')
