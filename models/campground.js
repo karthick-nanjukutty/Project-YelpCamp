@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const review = require('./review')
 
 const yelpSchema = new Schema ({
 
@@ -23,10 +24,26 @@ const yelpSchema = new Schema ({
 
     image: {
         type: String
-    }
+    },
+
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }]
 
 
 }); 
+yelpSchema.post('findOneAndDelete' , async ( doc) =>{
+    if (doc){
+        console.log( "DELTED", doc ," is DELETED")
+        await review.deleteMany({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+   
+})
 
 const YelpCamp = mongoose.model('YelpCamp', yelpSchema);
 module.exports = YelpCamp
