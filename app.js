@@ -20,17 +20,34 @@ const Review = require('./models/review')
 const campgroundsRoutes = require('./routes/campground')
 const reviewRoutes = require('./routes/reviews')
 const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
+const session = require('express-session')
 
 app.use('/campgrounds', campgroundsRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)
 
+app.use(express.static(path.join(__dirname, 'public')))
+const sessionConfig = {
+    secret: 'thisshouldbeasecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly:  true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+
+}
+app.use(session(sessionConfig))
 
 
 
 main().catch(err => console.log('OH NO ERROR', err));
 async function main () {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/campyelp');
+        await mongoose.connect('mongodb://127.0.0.1:27017/campyelp',{
+            
+        });
+        //   mongoose.set("strictQuery" , true)
     console.log("Mongo connection Open for YelpCamp New")
 
     }
