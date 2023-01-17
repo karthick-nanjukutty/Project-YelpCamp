@@ -32,7 +32,7 @@
 
     <div class="col-6">
       <h2>Please leave a review</h2>
-          <form action="/camgrounds/<%= campground._id%>/reviews" method="POST" class = "mb-3 needs-validation" novalidate >
+          <form action="/campgrounds/<%= campground._id%>/reviews" method="POST" class = "mb-3 needs-validation" novalidate >
             <div class="b-3">
               <label class = "form-label" for="rating">Rating</label>
               <input class="form-range" type="range" min ="1" max ="5" name="review[rating]" id="rating" required>
