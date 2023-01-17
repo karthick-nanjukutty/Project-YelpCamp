@@ -52,6 +52,11 @@ router.get ('/:id' , wrapAsync(async (req,res) =>{
     const {id} = req.params;
     const campground = await YelpCamp.findById(id).populate('reviews')
     console.log(campground)
+
+    if (!campground){
+        req.flash('error' , 'Cannot find that campground')
+        return res.redirect('/campgrounds')
+    }
     res.render('campgrounds/show',{campground})
 }))
 /*Get Campgroung Details to Edit*/
