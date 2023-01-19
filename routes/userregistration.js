@@ -4,7 +4,8 @@ var router = express.Router();
 const ExpressError = require('../utils/expresserror')
 const wrapAsync = require('../utils/catchAsync')
 const YelpCamp = require('../models/campground');
-const User = require('../models/user')
+const User = require('../models/user');
+const passport = require('passport');
 
 router.get('/register' , (req,res)=>{
     res.render('users/register')
@@ -15,7 +16,7 @@ router.post('/register' , wrapAsync(async(req,res)=>{
     const {email,username,password} = req.body;
     const user =  new User({email,username});
     const registeredUser = await User.register(user,password);
-    console.log(registeredUser)
+    console.log("registered user" , registeredUser)
     req.flash('success','Welcome to YelpCamp')
     res.redirect('/campgrounds')
      }
@@ -26,4 +27,15 @@ router.post('/register' , wrapAsync(async(req,res)=>{
      }
     //res.send(req.body)
 }))
+
+router.get('/login' ,(req,res) =>{
+    res.render('users/login')
+})
+
+router.post('/login' , passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), (req,res) => {
+    console.log ('Calling post login')
+    req.flash('success', 'Welcome back')
+    console.log('redirecting to campgrounds after login')
+ res.redirect('/campgrounds')
+})
 module.exports = router;

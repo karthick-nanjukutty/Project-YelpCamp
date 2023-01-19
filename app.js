@@ -110,10 +110,10 @@ app.get ('/', (req,res) =>{
 
 
 
-app.all('*', (req,res,next) =>{
-    //res.send('404')
-    next ( new ExpressError('Page Not Found', 404))
-})
+// app.all('*', (req,res,next) =>{
+//     //res.send('404')
+//     next ( new ExpressError('Page Not Found', 404))
+// })
 
 app.use ((err,req,res,next) =>{
     console.log("the error stack is " ,err.stack)
@@ -125,6 +125,9 @@ app.use ((err,req,res,next) =>{
     res.status(status).render('error', { err })
     //res.send( 'OH Boy!! Something went wrong')
 })
+
+
+
 app.listen(3015,()=>{
     console.log("Welcome to Yelcamp on port 3015");
 })
