@@ -19,6 +19,7 @@ const wrapAsync = require('./utils/catchAsync')
 const Review = require('./models/review')
 const campgroundsRoutes = require('./routes/campground')
 const reviewRoutes = require('./routes/reviews')
+const userRoutes = require('./routes/userregistration')
 const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -52,6 +53,8 @@ passport.deserializeUser(User.deserializeUser);
 
 
 
+
+
 app.use((req,res,next) =>{
     res.locals.success = req.flash('success'); 
     res.locals.error = req.flash('error')
@@ -69,6 +72,7 @@ app.get('/fakeUser' , async (req,res) =>{
     res.send(newUser)
 }) 
 */
+app.use('/', userRoutes)
 
 app.use('/campgrounds', campgroundsRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)

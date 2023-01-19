@@ -81,7 +81,7 @@ router.delete ('/:id' , wrapAsync(async (req,res) =>{
     console.log('Deleting Campgrounds')
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
-    req.flash('Success' , 'Successfully Deleted Campground')
+    req.flash('success' , 'Successfully Deleted Campground')
     res.redirect('/campgrounds')
 }))
 
