@@ -6,16 +6,18 @@ const wrapAsync = require('../utils/catchAsync')
 const Review = require('../models/review')
 const YelpCamp = require('../models/campground');
 const {validateReview} = require('../middleware')
+const {isLoggedIn} = require('../middleware')
 const {reviewSchema} = require('../joischema/joicampgroundschema')
 
 
 
 // POST / Review ==> /camground/:id/reviews
-router.post('/' , validateReview, wrapAsync(async (req,res) =>{
+router.post('/' , isLoggedIn, validateReview, wrapAsync(async (req,res) =>{
     const {id} = req.params
     console.log(id)
     const campground = await YelpCamp.findById(id)
     const review = new Review (req.body.review)
+    review.author = req.user._id
     campground.reviews.push(review);
     await review.save();
     await campground.save();
