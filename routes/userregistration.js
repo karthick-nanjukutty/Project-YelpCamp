@@ -32,10 +32,18 @@ router.get('/login' ,(req,res) =>{
     res.render('users/login')
 })
 
-router.post('/login' , passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), (req,res) => {
+router.post('/login', passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), (req,res) => {
+    try {
+
+    
     console.log ('Calling post login')
     req.flash('success', 'Welcome back')
     console.log('redirecting to campgrounds after login')
- res.redirect('/campgrounds')
+    
+    res.redirect('/campgrounds')
+    }
+    catch (e) {
+        console.log ("the error is", e)
+    }
 })
 module.exports = router;

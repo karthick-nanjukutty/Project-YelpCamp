@@ -26,7 +26,7 @@ const validateCampground = (req,res,next) =>{
 }
 
 
-router.get ('/' , isLoggedIn, wrapAsync(async (req,res) =>{
+router.get ('/' , wrapAsync(async (req,res) =>{
     const campgrounds = await YelpCamp.find();
     res.render('campgrounds/index', {campgrounds})
 }))
