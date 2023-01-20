@@ -41,7 +41,8 @@ router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next)
 /* Show Campground Detail*/
 router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id).populate('reviews').populate('author')
+    const campground = await YelpCamp.findById(id)
+    .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
     console.log(campground)
 
     if (!campground){
