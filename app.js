@@ -19,9 +19,14 @@ const wrapAsync = require('./utils/catchAsync')
 const Review = require('./models/review')
 const campgroundsRoutes = require('./routes/campground')
 const reviewRoutes = require('./routes/reviews')
+const userRoutes = require('./routes/userregistration')
 const {campgroundSchema,reviewSchema} = require('./joischema/joicampgroundschema')
 const session = require('express-session')
 const flash = require('connect-flash')
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user')
+
 
 app.use(express.static(path.join(__dirname, 'public')))
 const sessionConfig = {
@@ -36,15 +41,43 @@ const sessionConfig = {
 
 }
 
+
 app.use(session(sessionConfig));
 
 app.use(flash());
 
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next) =>{
+    console.log("the session is" , req.session)
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success'); 
     res.locals.error = req.flash('error')
     next ();
 })
+
+
+
+
+
+/*
+app.get('/fakeUser' , async (req,res) =>{
+    const user = await new User({
+        email: 'kkk1@gmail.com',
+        username: 'kkk1tttt',
+        
+    })
+    const newUser = await User.register(user,'kkktttchicken')
+    res.send(newUser)
+}) 
+*/
+app.use('/', userRoutes)
 
 app.use('/campgrounds', campgroundsRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)
@@ -82,10 +115,10 @@ app.get ('/', (req,res) =>{
 
 
 
-app.all('*', (req,res,next) =>{
-    //res.send('404')
-    next ( new ExpressError('Page Not Found', 404))
-})
+// app.all('*', (req,res,next) =>{
+//     //res.send('404')
+//     next ( new ExpressError('Page Not Found', 404))
+// })
 
 app.use ((err,req,res,next) =>{
     console.log("the error stack is " ,err.stack)
@@ -97,6 +130,9 @@ app.use ((err,req,res,next) =>{
     res.status(status).render('error', { err })
     //res.send( 'OH Boy!! Something went wrong')
 })
+
+
+
 app.listen(3015,()=>{
     console.log("Welcome to Yelcamp on port 3015");
 })
