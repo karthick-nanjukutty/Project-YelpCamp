@@ -45,9 +45,12 @@ router.post('/login', passport.authenticate('local' , { failureFlash: true, fail
     
     console.log ('Calling post login')
     req.flash('success', 'Welcome back')
+    const redirectUrl = req.session.returnTo || '/campgrounds'
+    delete  req.session.returnTo;
     console.log('redirecting to campgrounds after login')
     
-    res.redirect('/campgrounds')
+    //res.redirect('/campgrounds')
+    res.redirect(redirectUrl)
     
     
 })
