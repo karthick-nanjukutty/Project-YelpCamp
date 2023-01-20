@@ -5,19 +5,10 @@ const ExpressError = require('../utils/expresserror')
 const wrapAsync = require('../utils/catchAsync')
 const Review = require('../models/review')
 const YelpCamp = require('../models/campground');
+const {validateReview} = require('../middleware')
 const {reviewSchema} = require('../joischema/joicampgroundschema')
 
-const validateReview = (req,res,next) =>{
-    const {error} = reviewSchema.validate(req.body);
-    if (error) {
-        console.log ("Joi result is for REview Schema ", error)
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-    else {
-        next()
-    }
-}
+
 
 // POST / Review ==> /camground/:id/reviews
 router.post('/' , validateReview, wrapAsync(async (req,res) =>{

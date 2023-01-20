@@ -5,25 +5,13 @@ const ExpressError = require('../utils/expresserror')
 const wrapAsync = require('../utils/catchAsync')
 const YelpCamp = require('../models/campground');
 const {isLoggedIn} = require('../middleware')
+const {isAuthored} = require('../middleware');
+const {validateCampground} = require('../middleware')
 const {campgroundSchema} = require('../joischema/joicampgroundschema')
 
-const validateCampground = (req,res,next) =>{
-    
-   
-    
-    //const joiResult = campgroundSchema.validate({campground})
-    const { error }= campgroundSchema.validate(req.body);
-    
-    if (error) {
-        console.log ("Joi result is ", error)
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-    else {
-        next()
-    }
 
-}
+
+
 
 
 router.get ('/' , wrapAsync(async (req,res) =>{
@@ -63,7 +51,7 @@ router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
     res.render('campgrounds/show',{campground})
 }))
 /*Get Campgroung Details to Edit*/
-router.get ('/:id/edit' , isLoggedIn, wrapAsync(async(req,res) =>{
+router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(async(req,res) =>{
     const {id} = req.params;
     const campgroundById = await YelpCamp.findById(id)
 
@@ -72,25 +60,16 @@ router.get ('/:id/edit' , isLoggedIn, wrapAsync(async(req,res) =>{
         return res.redirect('/campgrounds')
     }
 
-    if (!campgroundById.author.equals(req.user._id)){
-        req.flash('error', 'You do not have permission to do Edit')
-        res.redirect(`/campgrounds/${id}`)
-    }
-    
+   
     res.render ('campgrounds/edit' , {campground : campgroundById})
 }))
 /*Update Campground details using the id and method Override */
 
-router.put ('/:id' ,isLoggedIn, validateCampground, wrapAsync(async(req,res) =>{
+router.put ('/:id' ,isLoggedIn, isAuthored, validateCampground, wrapAsync(async(req,res) =>{
 
     const {id} = req.params;
     const {campground} = req.body;
-    const campgroundById = await YelpCamp.findById(id)
-    console.log("requested user is " , req.user)
-    if (!campgroundById.author.equals(req.user._id)){
-        req.flash('error', 'You do not have permission to do that')
-        res.redirect(`/campgrounds/${id}`)
-    }
+   
     
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
     req.flash('success' ,'Successfully Updated Campground')
@@ -99,7 +78,7 @@ router.put ('/:id' ,isLoggedIn, validateCampground, wrapAsync(async(req,res) =>{
 
 /* Delete/Remove Playgound */
 
-router.delete ('/:id' , wrapAsync(async (req,res) =>{
+router.delete ('/:id' , isLoggedIn, isAuthored, wrapAsync(async (req,res) =>{
     console.log('Deleting Campgrounds')
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);
