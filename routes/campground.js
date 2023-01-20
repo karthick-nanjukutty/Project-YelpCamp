@@ -65,14 +65,33 @@ router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
 /*Get Campgroung Details to Edit*/
 router.get ('/:id/edit' , isLoggedIn, wrapAsync(async(req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id)
-    res.render ('campgrounds/edit' , {campground})
+    const campgroundById = await YelpCamp.findById(id)
+
+    if (!campgroundById) {
+        req.flash('error', 'Cannot find that campground')
+        return res.redirect('/campgrounds')
+    }
+
+    if (!campgroundById.author.equals(req.user._id)){
+        req.flash('error', 'You do not have permission to do Edit')
+        res.redirect(`/campgrounds/${id}`)
+    }
+    
+    res.render ('campgrounds/edit' , {campground : campgroundById})
 }))
 /*Update Campground details using the id and method Override */
 
-router.put ('/:id' , validateCampground, wrapAsync(async(req,res) =>{
+router.put ('/:id' ,isLoggedIn, validateCampground, wrapAsync(async(req,res) =>{
+
     const {id} = req.params;
     const {campground} = req.body;
+    const campgroundById = await YelpCamp.findById(id)
+    console.log("requested user is " , req.user)
+    if (!campgroundById.author.equals(req.user._id)){
+        req.flash('error', 'You do not have permission to do that')
+        res.redirect(`/campgrounds/${id}`)
+    }
+    
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
     req.flash('success' ,'Successfully Updated Campground')
     res.redirect(`/campgrounds/${updatedCampground._id}`)
