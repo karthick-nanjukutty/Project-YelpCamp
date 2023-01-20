@@ -42,6 +42,7 @@ router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next)
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
 
     const {campground} = req.body
+    campground.author = req.user._id;
     const newCampground = await new YelpCamp(campground).save();
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
@@ -52,7 +53,7 @@ router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next)
 /* Show Campground Detail*/
 router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id).populate('reviews')
+    const campground = await YelpCamp.findById(id).populate('reviews').populate('author')
     console.log(campground)
 
     if (!campground){
