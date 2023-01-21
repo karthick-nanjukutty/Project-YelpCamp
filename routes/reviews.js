@@ -7,6 +7,7 @@ const Review = require('../models/review')
 const YelpCamp = require('../models/campground');
 const {validateReview} = require('../middleware')
 const {isLoggedIn} = require('../middleware')
+const {isReviewAuthored} = require('../middleware')
 const {reviewSchema} = require('../joischema/joicampgroundschema')
 
 
@@ -26,8 +27,9 @@ router.post('/' , isLoggedIn, validateReview, wrapAsync(async (req,res) =>{
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-router.delete('/:reviewId' ,wrapAsync(async (req,res) =>{
+router.delete('/:reviewId' ,isLoggedIn, isReviewAuthored,wrapAsync(async (req,res) =>{
     const {id, reviewId} = req.params
+    console.log('Deltng Reviews')
     await YelpCamp.findByIdAndUpdate(id, {$pull : { reviews: reviewId}})
     await Review.findByIdAndDelete(reviewId);
     req.flash('success' , 'Successfully Delted Review')

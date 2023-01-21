@@ -4,6 +4,7 @@ const YelpCamp = require('./models/campground');
 const {reviewSchema} = require('./joischema/joicampgroundschema')
 const Review = require('./models/review')
 
+
 module.exports.isLoggedIn = (req,res,next) =>{
     console.log("REQ USER...", req.user )
     if (!req.isAuthenticated()) {
@@ -24,6 +25,21 @@ module.exports.isAuthored  = async(req,res,next) =>{
     if (!campgroundById.author.equals(req.user._id)){
         req.flash('error', 'You do not have permission to do that')
         res.redirect(`/campgrounds/${id}`)
+    }
+    next ()
+}
+
+module.exports.isReviewAuthored  = async(req,res,next) =>{
+    const {id, reviewId} = req.params;
+    const review = await Review.findById(reviewId)
+    console.log("Review Details", review)
+    console.log("requested user is " , req.user)
+    if (!review.author.equals(req.user._id)){
+        console.log("review author is", review.author)
+        
+
+        req.flash('error', 'You do not have permission to do Reviews')
+        return res.redirect(`/campgrounds/${id}`)
     }
     next ()
 }
