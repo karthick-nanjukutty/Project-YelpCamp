@@ -8,14 +8,13 @@ const User = require('../models/user');
 const passport = require('passport');
 const userControllers = require('../controllers/users')
 
+router.route('/register')
+.get( userControllers.renderUserRegistration )
+.post(wrapAsync(userControllers.createUserRegistration))
 
-router.get('/register' , userControllers.renderUserRegistration )
-
-router.post('/register' , wrapAsync(userControllers.createUserRegistration))
-
-router.get('/login' ,userControllers.renderUserLogin)
-
-router.post('/login', passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), userControllers.authenticateUserLogin)
+router.route('/login')
+.get(userControllers.renderUserLogin)
+.post(passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), userControllers.authenticateUserLogin)
 
 router.get('/logout' ,userControllers.userLogout)
 module.exports = router;
