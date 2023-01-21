@@ -8,83 +8,30 @@ const {isLoggedIn} = require('../middleware')
 const {isAuthored} = require('../middleware');
 const {validateCampground} = require('../middleware')
 const {campgroundSchema} = require('../joischema/joicampgroundschema')
+const campgrounds = require('../controllers/campgrounds')
 
 
-
-
-
-
-router.get ('/' , wrapAsync(async (req,res) =>{
-    const campgrounds = await YelpCamp.find();
-    res.render('campgrounds/index', {campgrounds})
-}))
-/*Get New Form for New Request */
-router.get ('/new' , isLoggedIn, (req,res) =>{
-  
-    res.render('campgrounds/new')
-})
-
+router.route('/')
+.get (wrapAsync(campgrounds.index))
 /*After Receiving the request from new form add to Db */
+.post ( isLoggedIn, validateCampground, wrapAsync(campgrounds.createCampgrounds))
 
-router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next) =>{
-    //if (!campground) throw new ExpressError('This is a Bad Request', 400)
+/*Get New Form for New Request */
+router.get ('/new' , isLoggedIn, campgrounds.renderNewForm)
 
-    const {campground} = req.body
-    campground.author = req.user._id;
-    const newCampground = await new YelpCamp(campground).save();
-    req.flash('success' , 'Successfully made a new campground')
-    res.redirect(`/campgrounds/${newCampground._id}`)
-
-    
-    
-}))
+router.route('/:id')
 /* Show Campground Detail*/
-router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
-    const {id} = req.params;
-    const campground = await YelpCamp.findById(id)
-    .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
-    console.log(campground)
-
-    if (!campground){
-        req.flash('error' , 'Cannot find that campground')
-        return res.redirect('/campgrounds')
-    }
-    res.render('campgrounds/show',{campground})
-}))
-/*Get Campgroung Details to Edit*/
-router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(async(req,res) =>{
-    const {id} = req.params;
-    const campgroundById = await YelpCamp.findById(id)
-
-    if (!campgroundById) {
-        req.flash('error', 'Cannot find that campground')
-        return res.redirect('/campgrounds')
-    }
-
-   
-    res.render ('campgrounds/edit' , {campground : campgroundById})
-}))
+.get (isLoggedIn, wrapAsync(campgrounds.showCampgroundDetails))
 /*Update Campground details using the id and method Override */
-
-router.put ('/:id' ,isLoggedIn, isAuthored, validateCampground, wrapAsync(async(req,res) =>{
-
-    const {id} = req.params;
-    const {campground} = req.body;
-   
-    
-    const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
-    req.flash('success' ,'Successfully Updated Campground')
-    res.redirect(`/campgrounds/${updatedCampground._id}`)
-}))
-
+.put (isLoggedIn, isAuthored, validateCampground, wrapAsync(campgrounds.editCampground))
 /* Delete/Remove Playgound */
+.delete (isLoggedIn, isAuthored, wrapAsync(campgrounds.removeCampground))
+/*Get Campgroung Details to Edit*/
 
-router.delete ('/:id' , isLoggedIn, isAuthored, wrapAsync(async (req,res) =>{
-    console.log('Deleting Campgrounds')
-    const { id } = req.params;
-    const deleteCampground = await YelpCamp.findByIdAndDelete(id);
-    req.flash('success' , 'Successfully Deleted Campground')
-    res.redirect('/campgrounds')
-}))
+router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(campgrounds.renderEditCampground))
+
+
+
+
 
 module.exports = router;

@@ -6,62 +6,15 @@ const wrapAsync = require('../utils/catchAsync')
 const YelpCamp = require('../models/campground');
 const User = require('../models/user');
 const passport = require('passport');
+const userControllers = require('../controllers/users')
 
-router.get('/register' , (req,res)=>{
-    res.render('users/register')
-})
+router.route('/register')
+.get( userControllers.renderUserRegistration )
+.post(wrapAsync(userControllers.createUserRegistration))
 
-router.post('/register' , wrapAsync(async(req,res)=>{
-    try {
-    const {email,username,password} = req.body;
-    const user =  new User({email,username});
-    const registeredUser = await User.register(user,password);
+router.route('/login')
+.get(userControllers.renderUserLogin)
+.post(passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), userControllers.authenticateUserLogin)
 
-    req.login(registeredUser, function(err) {
-        if (err) { return next(err); }
-        req.flash('success','Welcome to YelpCamp')
-       res.redirect('/campgrounds')
-       console.log("registered user" , registeredUser)
-      });
-
-    
-    
-     }
-     catch (e) {
-         req.flash('error' , e.message)
-         res.redirect('register')
-
-     }
-    //res.send(req.body)
-}))
-
-router.get('/login' ,(req,res) =>{
-    res.render('users/login')
-})
-
-router.post('/login', passport.authenticate('local' , { failureFlash: true, failureRedirect: '/login'}), (req,res) => {
-    
-
-    
-    console.log ('Calling post login')
-    req.flash('success', 'Welcome back')
-    const redirectUrl = req.session.returnTo || '/campgrounds'
-    delete  req.session.returnTo;
-    console.log('redirecting to campgrounds after login')
-    
-    //res.redirect('/campgrounds')
-    res.redirect(redirectUrl)
-    
-    
-})
-
-router.get('/logout' ,(req,res)=>{
-    req.logout((err) =>{
-        if(err) {
-            return next(err)
-        }
-    });
-    req.flash('success' , "Goodbye");
-    res.redirect('/campgrounds')
-})
+router.get('/logout' ,userControllers.userLogout)
 module.exports = router;
