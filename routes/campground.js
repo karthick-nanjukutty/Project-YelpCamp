@@ -11,27 +11,27 @@ const {campgroundSchema} = require('../joischema/joicampgroundschema')
 const campgrounds = require('../controllers/campgrounds')
 
 
+router.route('/')
+.get (wrapAsync(campgrounds.index))
+/*After Receiving the request from new form add to Db */
+.post ( isLoggedIn, validateCampground, wrapAsync(campgrounds.createCampgrounds))
 
-
-
-
-router.get ('/' , wrapAsync(campgrounds.index))
 /*Get New Form for New Request */
 router.get ('/new' , isLoggedIn, campgrounds.renderNewForm)
 
-/*After Receiving the request from new form add to Db */
-
-router.post ('/' , isLoggedIn, validateCampground, wrapAsync(campgrounds.createCampgrounds))
+router.route('/:id')
 /* Show Campground Detail*/
-router.get ('/:id' ,isLoggedIn, wrapAsync(campgrounds.showCampgroundDetails))
-/*Get Campgroung Details to Edit*/
-router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(campgrounds.renderEditCampground))
+.get (isLoggedIn, wrapAsync(campgrounds.showCampgroundDetails))
 /*Update Campground details using the id and method Override */
-
-router.put ('/:id' ,isLoggedIn, isAuthored, validateCampground, wrapAsync(campgrounds.editCampground))
-
+.put (isLoggedIn, isAuthored, validateCampground, wrapAsync(campgrounds.editCampground))
 /* Delete/Remove Playgound */
+.delete (isLoggedIn, isAuthored, wrapAsync(campgrounds.removeCampground))
+/*Get Campgroung Details to Edit*/
 
-router.delete ('/:id' , isLoggedIn, isAuthored, wrapAsync(campgrounds.removeCampground))
+router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(campgrounds.renderEditCampground))
+
+
+
+
 
 module.exports = router;

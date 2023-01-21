@@ -8,6 +8,7 @@ const User = require('../models/user');
 const passport = require('passport');
 const userControllers = require('../controllers/users')
 
+
 router.get('/register' , userControllers.renderUserRegistration )
 
 router.post('/register' , wrapAsync(userControllers.createUserRegistration))
