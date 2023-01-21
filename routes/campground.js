@@ -5,25 +5,13 @@ const ExpressError = require('../utils/expresserror')
 const wrapAsync = require('../utils/catchAsync')
 const YelpCamp = require('../models/campground');
 const {isLoggedIn} = require('../middleware')
+const {isAuthored} = require('../middleware');
+const {validateCampground} = require('../middleware')
 const {campgroundSchema} = require('../joischema/joicampgroundschema')
 
-const validateCampground = (req,res,next) =>{
-    
-   
-    
-    //const joiResult = campgroundSchema.validate({campground})
-    const { error }= campgroundSchema.validate(req.body);
-    
-    if (error) {
-        console.log ("Joi result is ", error)
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-    else {
-        next()
-    }
 
-}
+
+
 
 
 router.get ('/' , wrapAsync(async (req,res) =>{
@@ -42,6 +30,7 @@ router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next)
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
 
     const {campground} = req.body
+    campground.author = req.user._id;
     const newCampground = await new YelpCamp(campground).save();
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
@@ -52,7 +41,8 @@ router.post ('/' , isLoggedIn, validateCampground, wrapAsync(async(req,res,next)
 /* Show Campground Detail*/
 router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id).populate('reviews')
+    const campground = await YelpCamp.findById(id)
+    .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
     console.log(campground)
 
     if (!campground){
@@ -62,16 +52,26 @@ router.get ('/:id' ,isLoggedIn, wrapAsync(async (req,res) =>{
     res.render('campgrounds/show',{campground})
 }))
 /*Get Campgroung Details to Edit*/
-router.get ('/:id/edit' , isLoggedIn, wrapAsync(async(req,res) =>{
+router.get ('/:id/edit' , isLoggedIn, isAuthored,wrapAsync(async(req,res) =>{
     const {id} = req.params;
-    const campground = await YelpCamp.findById(id)
-    res.render ('campgrounds/edit' , {campground})
+    const campgroundById = await YelpCamp.findById(id)
+
+    if (!campgroundById) {
+        req.flash('error', 'Cannot find that campground')
+        return res.redirect('/campgrounds')
+    }
+
+   
+    res.render ('campgrounds/edit' , {campground : campgroundById})
 }))
 /*Update Campground details using the id and method Override */
 
-router.put ('/:id' , validateCampground, wrapAsync(async(req,res) =>{
+router.put ('/:id' ,isLoggedIn, isAuthored, validateCampground, wrapAsync(async(req,res) =>{
+
     const {id} = req.params;
     const {campground} = req.body;
+   
+    
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
     req.flash('success' ,'Successfully Updated Campground')
     res.redirect(`/campgrounds/${updatedCampground._id}`)
@@ -79,7 +79,7 @@ router.put ('/:id' , validateCampground, wrapAsync(async(req,res) =>{
 
 /* Delete/Remove Playgound */
 
-router.delete ('/:id' , wrapAsync(async (req,res) =>{
+router.delete ('/:id' , isLoggedIn, isAuthored, wrapAsync(async (req,res) =>{
     console.log('Deleting Campgrounds')
     const { id } = req.params;
     const deleteCampground = await YelpCamp.findByIdAndDelete(id);

@@ -41,6 +41,7 @@ const seedDb = async () =>{
         const priceRandom = Math.floor (Math.random()*30);
         
         const yelpBulk = await new YelpCamp ({
+            author: '63ca6e49db8c462d5faa7022',
           title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
           image: 'https://source.unsplash.com/collection/3846912',

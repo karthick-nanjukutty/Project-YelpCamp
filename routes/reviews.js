@@ -5,26 +5,20 @@ const ExpressError = require('../utils/expresserror')
 const wrapAsync = require('../utils/catchAsync')
 const Review = require('../models/review')
 const YelpCamp = require('../models/campground');
+const {validateReview} = require('../middleware')
+const {isLoggedIn} = require('../middleware')
+const {isReviewAuthored} = require('../middleware')
 const {reviewSchema} = require('../joischema/joicampgroundschema')
 
-const validateReview = (req,res,next) =>{
-    const {error} = reviewSchema.validate(req.body);
-    if (error) {
-        console.log ("Joi result is for REview Schema ", error)
-        const message = error.details.map( element => element.message).join(',')
-        throw new ExpressError(message, 400)
-    }
-    else {
-        next()
-    }
-}
+
 
 // POST / Review ==> /camground/:id/reviews
-router.post('/' , validateReview, wrapAsync(async (req,res) =>{
+router.post('/' , isLoggedIn, validateReview, wrapAsync(async (req,res) =>{
     const {id} = req.params
     console.log(id)
     const campground = await YelpCamp.findById(id)
     const review = new Review (req.body.review)
+    review.author = req.user._id
     campground.reviews.push(review);
     await review.save();
     await campground.save();
@@ -33,8 +27,9 @@ router.post('/' , validateReview, wrapAsync(async (req,res) =>{
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-router.delete('/:reviewId' ,wrapAsync(async (req,res) =>{
+router.delete('/:reviewId' ,isLoggedIn, isReviewAuthored,wrapAsync(async (req,res) =>{
     const {id, reviewId} = req.params
+    console.log('Deltng Reviews')
     await YelpCamp.findByIdAndUpdate(id, {$pull : { reviews: reviewId}})
     await Review.findByIdAndDelete(reviewId);
     req.flash('success' , 'Successfully Delted Review')
