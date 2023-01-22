@@ -19,19 +19,22 @@ const yelpSchema = new Schema ({
     }, 
 
     location: {
-        type: String
+        type: String,
     }, 
 
+
+
     images: [{
-       url: String,
-       filename: String
-    },
-    ],
+        url: String,
+        filename: String
+    }],
+    
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-
     },
+
+
 
     reviews: [{
         type: Schema.Types.ObjectId,

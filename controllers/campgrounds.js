@@ -15,7 +15,12 @@ module.exports.createCampgrounds = async(req,res,next) =>{
 
     const {campground} = req.body
     campground.author = req.user._id;
+    campground.images = req.files.map(f =>({
+        url: f.path,
+        filename: f.filename
+    }))
     const newCampground = await new YelpCamp(campground).save();
+    console.log(newCampground)
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
 
@@ -27,6 +32,7 @@ module.exports.showCampgroundDetails =async (req,res) =>{
     const {id} = req.params;
     const campground = await YelpCamp.findById(id)
     .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
+    
     console.log(campground)
 
     if (!campground){
