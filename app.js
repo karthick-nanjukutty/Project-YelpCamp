@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production' ) {
+    require('dotenv').config()
+}
+console.log(`the cloudinary name is ${process.env.CLOUDINARY_CLOUD_NAME}` )
 const express = require('express');
 const app = express();
 //const engine = require('ejs-mate');
