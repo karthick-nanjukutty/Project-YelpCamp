@@ -1,5 +1,6 @@
 const YelpCamp = require('../models/campground');
 
+
 module.exports.index = async (req,res) =>{
     const campgrounds = await YelpCamp.find();
     res.render('campgrounds/index', {campgrounds})
@@ -20,7 +21,7 @@ module.exports.createCampgrounds = async(req,res,next) =>{
         filename: f.filename
     }))
     const newCampground = await new YelpCamp(campground).save();
-    console.log(newCampground)
+  
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
 
@@ -58,11 +59,15 @@ module.exports.renderEditCampground = async(req,res) =>{
 module.exports.editCampground = async(req,res) =>{
 
     const {id} = req.params;
-    const {campground} = req.body;
-   
-    
-    const updatedCampground = await YelpCamp.findByIdAndUpdate(id,campground)
-    req.flash('success' ,'Successfully Updated Campground')
+    //const {campground} = req.body;
+    const updatedCampground = await YelpCamp.findByIdAndUpdate(id,{...req.body.campground})
+    const imgs = req.files.map(f =>({
+        url: f.path,
+        filename: f.filename
+    }))
+   updatedCampground.images.push (...imgs)
+    await updatedCampground.save();
+   req.flash('success' ,'Successfully Updated Campground')
     res.redirect(`/campgrounds/${updatedCampground._id}`)
 }
 
