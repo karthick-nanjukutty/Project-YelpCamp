@@ -88,3 +88,5 @@ module.exports.removeCampground = async (req,res) =>{
     req.flash('success' , 'Successfully Deleted Campground')
     res.redirect('/campgrounds')
 }
+
+//https://res.cloudinary.com/da773w92s/image/upload/w_300/v1674397190/Yelpcamp/hvmuhcwqhywthmnvdktd.png
