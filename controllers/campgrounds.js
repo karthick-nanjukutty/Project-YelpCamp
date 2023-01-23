@@ -60,13 +60,20 @@ module.exports.editCampground = async(req,res) =>{
 
     const {id} = req.params;
     //const {campground} = req.body;
+    console.log("to be updated campground", req.body)
     const updatedCampground = await YelpCamp.findByIdAndUpdate(id,{...req.body.campground})
     const imgs = req.files.map(f =>({
         url: f.path,
         filename: f.filename
     }))
    updatedCampground.images.push (...imgs)
+
+
     await updatedCampground.save();
+    if (req.body.deleteImages) {
+    await updatedCampground.updateOne({$pull : {images: {filename: {$in: req.body.deleteImages}}}})
+    }
+    console.log("after update details" , updatedCampground)
    req.flash('success' ,'Successfully Updated Campground')
     res.redirect(`/campgrounds/${updatedCampground._id}`)
 }
