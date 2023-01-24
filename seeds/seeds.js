@@ -44,8 +44,20 @@ const seedDb = async () =>{
             author: '63ca6e49db8c462d5faa7022',
           title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
-          image: 'https://source.unsplash.com/collection/3846912',
+          //image: 'https://source.unsplash.com/collection/3846912',
           price: priceRandom,
+          images: [
+            {
+              url: 'https://res.cloudinary.com/da773w92s/image/upload/v1674392426/Yelpcamp/bnfnkwcupuypsmvvqyhf.png',
+              filename: 'Yelpcamp/bnfnkwcupuypsmvvqyhf',
+              
+            },
+            {
+              url: 'https://res.cloudinary.com/da773w92s/image/upload/v1674392425/Yelpcamp/vovweaj375asrwqzfsjw.jpg',
+              filename: 'Yelpcamp/vovweaj375asrwqzfsjw',
+             
+            }
+          ],
           description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
         }).save().then (res =>{
             console.log('Many products Added' , res)
