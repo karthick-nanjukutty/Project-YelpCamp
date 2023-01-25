@@ -7,7 +7,10 @@
                 <div class="col-md-4">
                     <% if (campground.images.length >1) { %> 
                     <img class="img-fluid" alt="" src="<%= campground.images[0].url %> ">
+                    <% } else {%> 
+                        <img class="img-fluid" alt="" src="/uploadingsoon.jpeg">
                     <% } %> 
+
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
