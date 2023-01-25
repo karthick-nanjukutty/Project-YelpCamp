@@ -21,8 +21,8 @@ module.exports.createCampgrounds = async(req,res,next) =>{
         query: req.body.campground.location,
         limit: 1
     }).send()
-    console.log(geoData.body.features[0].geometry.coordinates)
-    res.send(geoData.body.features[0].geometry.coordinates)
+    console.log(geoData.body.features[0].geometry)
+    res.send(geoData.body.features[0].geometry)
 
     // const {campground} = req.body
     // campground.author = req.user._id;
