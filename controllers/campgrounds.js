@@ -18,11 +18,11 @@ module.exports.renderNewForm = (req,res) =>{
 module.exports.createCampgrounds = async(req,res,next) =>{
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
    const geoData = await  mbxGeocodingService.forwardGeocode({
-        query: 'Paris, France',
+        query: req.body.campground.location,
         limit: 1
     }).send()
     console.log(geoData.body.features[0].geometry.coordinates)
-    res.send('OK')
+    res.send(geoData.body.features[0].geometry.coordinates)
 
     // const {campground} = req.body
     // campground.author = req.user._id;
