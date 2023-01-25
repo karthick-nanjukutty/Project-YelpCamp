@@ -1,5 +1,9 @@
 const YelpCamp = require('../models/campground');
 const {cloudinary} = require('../cloudinary')
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding")
+
+// const mbxStyles = require('@mapbox/mapbox-sdk/services/styles');
+const mbxGeocodingService = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
 
 module.exports.index = async (req,res) =>{
     const campgrounds = await YelpCamp.find();
@@ -13,6 +17,12 @@ module.exports.renderNewForm = (req,res) =>{
 
 module.exports.createCampgrounds = async(req,res,next) =>{
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
+   const geoData = await  mbxGeocodingService.forwardGeocode({
+        query: req.body.campground.location,
+        limit: 1
+    }).send()
+    // console.log(geoData.body.features[0].geometry)
+    // res.send(geoData.body.features[0].geometry)
 
     const {campground} = req.body
     campground.author = req.user._id;
@@ -20,7 +30,10 @@ module.exports.createCampgrounds = async(req,res,next) =>{
         url: f.path,
         filename: f.filename
     }))
+    campground.geometry = geoData.body.features[0].geometry
     const newCampground = await new YelpCamp(campground).save();
+   
+    
   
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
@@ -34,7 +47,7 @@ module.exports.showCampgroundDetails =async (req,res) =>{
     const campground = await YelpCamp.findById(id)
     .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
     
-    console.log(campground)
+    console.log("show campground is" ,campground)
 
     if (!campground){
         req.flash('error' , 'Cannot find that campground')

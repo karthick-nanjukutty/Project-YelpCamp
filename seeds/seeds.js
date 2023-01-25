@@ -35,7 +35,9 @@ const sampleTitle = array => array[Math.floor(Math.random()*array.length)]
 
 
 const seedDb = async () =>{
+
     await YelpCamp.deleteMany();
+    
     for (i=0; i<100; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const priceRandom = Math.floor (Math.random()*30);
@@ -45,6 +47,7 @@ const seedDb = async () =>{
           title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
           //image: 'https://source.unsplash.com/collection/3846912',
+         geometry: { type: 'Point', coordinates: [ 77.2090057, 28.6138954 ] },
           price: priceRandom,
           images: [
             {
@@ -73,3 +76,25 @@ seedDb().then (() =>{
 }).catch (e =>{
     console.log("Seeds Error" , e)
 })
+
+
+/*
+show campground is {
+  geometry: { type: 'Point', coordinates: [ 77.2090057, 28.6138954 ] },
+  _id: new ObjectId("63d110efab7077b8d6d90755"),
+  title: 'delhi',
+  images: [],
+  price: 27,
+  description: 'asaa',
+  location: 'delhi',
+  author: {
+    _id: new ObjectId("63cbcc11b1f5e41b586d406f"),
+    email: 'gorilla2@gmail.com',
+    username: 'gorilla2',
+    __v: 0
+  },
+  reviews: [],
+  __v: 0
+
+
+  */
