@@ -1,5 +1,9 @@
 const YelpCamp = require('../models/campground');
 const {cloudinary} = require('../cloudinary')
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding")
+
+// const mbxStyles = require('@mapbox/mapbox-sdk/services/styles');
+const mbxGeocodingService = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
 
 module.exports.index = async (req,res) =>{
     const campgrounds = await YelpCamp.find();
@@ -13,17 +17,23 @@ module.exports.renderNewForm = (req,res) =>{
 
 module.exports.createCampgrounds = async(req,res,next) =>{
     //if (!campground) throw new ExpressError('This is a Bad Request', 400)
+   const geoData = await  mbxGeocodingService.forwardGeocode({
+        query: 'Paris, France',
+        limit: 1
+    }).send()
+    console.log(geoData.body.features[0].geometry.coordinates)
+    res.send('OK')
 
-    const {campground} = req.body
-    campground.author = req.user._id;
-    campground.images = req.files.map(f =>({
-        url: f.path,
-        filename: f.filename
-    }))
-    const newCampground = await new YelpCamp(campground).save();
+    // const {campground} = req.body
+    // campground.author = req.user._id;
+    // campground.images = req.files.map(f =>({
+    //     url: f.path,
+    //     filename: f.filename
+    // }))
+    // const newCampground = await new YelpCamp(campground).save();
   
-    req.flash('success' , 'Successfully made a new campground')
-    res.redirect(`/campgrounds/${newCampground._id}`)
+    // req.flash('success' , 'Successfully made a new campground')
+    // res.redirect(`/campgrounds/${newCampground._id}`)
 
     
     
