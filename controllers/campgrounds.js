@@ -21,19 +21,20 @@ module.exports.createCampgrounds = async(req,res,next) =>{
         query: req.body.campground.location,
         limit: 1
     }).send()
-    console.log(geoData.body.features[0].geometry)
-    res.send(geoData.body.features[0].geometry)
+    // console.log(geoData.body.features[0].geometry)
+    // res.send(geoData.body.features[0].geometry)
 
-    // const {campground} = req.body
-    // campground.author = req.user._id;
-    // campground.images = req.files.map(f =>({
-    //     url: f.path,
-    //     filename: f.filename
-    // }))
-    // const newCampground = await new YelpCamp(campground).save();
+    const {campground} = req.body
+    campground.author = req.user._id;
+    campground.images = req.files.map(f =>({
+        url: f.path,
+        filename: f.filename
+    }))
+    campground.geometry = geoData.body.features[0].geometry
+    const newCampground = await new YelpCamp(campground).save();
   
-    // req.flash('success' , 'Successfully made a new campground')
-    // res.redirect(`/campgrounds/${newCampground._id}`)
+    req.flash('success' , 'Successfully made a new campground')
+    res.redirect(`/campgrounds/${newCampground._id}`)
 
     
     
