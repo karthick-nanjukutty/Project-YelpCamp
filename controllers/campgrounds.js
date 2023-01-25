@@ -32,6 +32,8 @@ module.exports.createCampgrounds = async(req,res,next) =>{
     }))
     campground.geometry = geoData.body.features[0].geometry
     const newCampground = await new YelpCamp(campground).save();
+   
+    
   
     req.flash('success' , 'Successfully made a new campground')
     res.redirect(`/campgrounds/${newCampground._id}`)
@@ -45,7 +47,7 @@ module.exports.showCampgroundDetails =async (req,res) =>{
     const campground = await YelpCamp.findById(id)
     .populate({path:'reviews', populate: {path: 'author'}}).populate('author')
     
-    console.log(campground)
+    console.log("show campground is" ,campground)
 
     if (!campground){
         req.flash('error' , 'Cannot find that campground')
