@@ -38,7 +38,7 @@ const seedDb = async () =>{
 
     await YelpCamp.deleteMany();
     
-    for (i=0; i<100; i++) {
+    for (i=0; i<400; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const priceRandom = Math.floor (Math.random()*30);
         
@@ -47,7 +47,7 @@ const seedDb = async () =>{
           title: `${sampleTitle(descriptors)} ${sampleTitle(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
           //image: 'https://source.unsplash.com/collection/3846912',
-         geometry: { type: 'Point', coordinates: [ 77.2090057, 28.6138954 ] },
+         geometry: { type: 'Point', coordinates: [ cities[random1000].longitude,cities[random1000].latitude]  },
           price: priceRandom,
           images: [
             {
