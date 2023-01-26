@@ -112,7 +112,8 @@ async function main () {
 
 
 app.get ('/', (req,res) =>{
-    res.send('Welcome to HomePage')
+    res.render('home')
+    //res.send('Welcome to HomePage')
 })
 
 /*Get All Campground Details */
