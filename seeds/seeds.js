@@ -38,7 +38,7 @@ const seedDb = async () =>{
 
     await YelpCamp.deleteMany();
     
-    for (i=0; i<100; i++) {
+    for (i=0; i<400; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const priceRandom = Math.floor (Math.random()*30);
         

@@ -16,6 +16,8 @@ imageSchema.virtual('thumbnail').get(function() {
    return  this.url.replace('/upload', '/upload/w_200');
 })
 
+const opts = { toJSON: { virtuals: true } };
+
 const yelpSchema = new Schema ({
 
     title: {
@@ -68,10 +70,17 @@ const yelpSchema = new Schema ({
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: 'Review'
-    }]
+    }], 
+    
 
 
-}); 
+}, opts); 
+
+yelpSchema.virtual('properties.popUpMarkup').get(function() {
+    return   `<strong><a href="/campgrounds/${this._id}">${this.title} </a></strong>
+    <p>${this.description.substring(0,20)}... </p>`;
+    
+ })
 yelpSchema.post('findOneAndDelete' , async ( doc) =>{
     if (doc){
         console.log( "DELTED", doc ," is DELETED")
