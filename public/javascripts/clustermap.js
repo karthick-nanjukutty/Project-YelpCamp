@@ -6,7 +6,9 @@ style: 'mapbox://styles/mapbox/dark-v11',
 center: [-103.5917, 40.6699],
 zoom: 3
 });
-console.log(campgrounds)
+//console.log(campgrounds)
+
+map.addControl(new mapboxgl.NavigationControl() ,'bottom-right');
  
 map.on('load', () => {
     console.log("MAP Loaded")
