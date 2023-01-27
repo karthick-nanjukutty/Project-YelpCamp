@@ -30,9 +30,11 @@ const flash = require('connect-flash')
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user')
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(mongoSanitize( {replaceWith: '_'}));
 const sessionConfig = {
     secret: 'thisshouldbeasecret',
     resave: false,
@@ -59,7 +61,8 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next) =>{
-    console.log("the session is" , req.session)
+    console.log(req.query)
+    //console.log("the session is" , req.session)
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success'); 
     res.locals.error = req.flash('error')
