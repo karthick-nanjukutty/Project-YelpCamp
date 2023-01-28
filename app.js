@@ -33,10 +33,21 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user')
 const mongoSanitize = require('express-mongo-sanitize');
 
+const MongoStore = require('connect-mongo');
+
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize( {replaceWith: '_'}));
+const store = new MongoStore({
+    mongoUrl: 'mongodb://127.0.0.1:27017/campyelp',
+    secret: 'thisshouldbeasecret',
+    touchAfter: 24 * 60 * 60
+})
+store.on("error" , (e) =>{
+    console.log ("session error" , e)
+})
 const sessionConfig = {
+    store,
     name: 'younameit',
     secret: 'thisshouldbeasecret',
     resave: false,
