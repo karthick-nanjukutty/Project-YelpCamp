@@ -3,6 +3,7 @@ if (process.env.NODE_ENV !== 'production' ) {
 }
 console.log(`the cloudinary name is ${process.env.CLOUDINARY_CLOUD_NAME}` )
 const express = require('express');
+const helmet = require("helmet");
 const app = express();
 //const engine = require('ejs-mate');
 app.use(express.json()) // for parsing application/json
@@ -53,9 +54,62 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 
 app.use(flash());
+/*app.use(helmet());
+// app.use(helmet({
+//     contentSecurityPolicy: false
+// }));
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://kit.fontawesome.com",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com",
+    "https://stackpath.bootstrapcdn.com",
+    "https://api.mapbox.com",
+    "https://api.tiles.mapbox.com",
+    "https://fonts.googleapis.com",
+    "https://use.fontawesome.com",
+];
 
+const connectSrcUrls = [
+    "https://*.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://events.mapbox.com",
+    "https://res.cloudinary.com/da773w92s/"
+];
 
+const fontSrcUrls = [  ];
 
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives : {
+                defaultSrc : [],
+                connectSrc : [ "'self'", ...connectSrcUrls ],
+                scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+                styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+                workerSrc  : [ "'self'", "blob:" ],
+                objectSrc  : [],
+                imgSrc     : [
+                    "'self'",
+                    "blob:",
+                    "data:",
+                    "https://res.cloudinary.com/da773w92s/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                    "https://images.unsplash.com/"
+                ],
+                fontSrc    : [ "'self'", ...fontSrcUrls ],
+               // mediaSrc   : [ "https://res.cloudinary.com/da773w92s/" ],
+                //childSrc   : [ "blob:" ]
+            }
+        },
+        crossOriginEmbedderPolicy: false
+    })
+);
+*/
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()))
@@ -143,7 +197,7 @@ app.use ((err,req,res,next) =>{
 
 
 
-app.listen(3015,()=>{
+app.listen(3016,()=>{
     console.log("Welcome to Yelcamp on port 3015");
 })
 
