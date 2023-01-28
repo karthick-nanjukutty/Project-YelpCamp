@@ -147,7 +147,8 @@ app.use('/campgrounds/:id/reviews', reviewRoutes)
 
 
 
-
+const dbUrl = process.env.DB_URL
+//mongodb://127.0.0.1:27017/campyelp
 
 
 
@@ -159,7 +160,7 @@ async function main () {
             
         });
         //   mongoose.set("strictQuery" , true)
-    console.log("Mongo connection Open for YelpCamp New")
+    console.log("Mongo connection Open for YelpCamp New in Atlas")
 
     }
 
