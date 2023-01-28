@@ -34,13 +34,15 @@ const User = require('./models/user')
 const mongoSanitize = require('express-mongo-sanitize');
 
 const MongoStore = require('connect-mongo');
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/campyelp'
+const secret = process.env.SECRET || 'thisshouldbeasecret'
 
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize( {replaceWith: '_'}));
 const store = new MongoStore({
-    mongoUrl: 'mongodb://127.0.0.1:27017/campyelp',
-    secret: 'thisshouldbeasecret',
+    mongoUrl: dbUrl,
+    secret: secret,
     touchAfter: 24 * 60 * 60
 })
 store.on("error" , (e) =>{
@@ -49,7 +51,7 @@ store.on("error" , (e) =>{
 const sessionConfig = {
     store,
     name: 'younameit',
-    secret: 'thisshouldbeasecret',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -167,7 +169,7 @@ const dbUrl = process.env.DB_URL
 main().catch(err => console.log('OH NO ERROR', err));
 async function main () {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/campyelp',{
+        await mongoose.connect(dbUrl,{
             
         });
         //   mongoose.set("strictQuery" , true)
