@@ -160,7 +160,7 @@ app.use('/campgrounds/:id/reviews', reviewRoutes)
 
 
 
-const dbUrl = process.env.DB_URL
+
 //mongodb://127.0.0.1:27017/campyelp
 
 
@@ -210,9 +210,9 @@ app.use ((err,req,res,next) =>{
 })
 
 
-
+const port = process.env.PORT || 3000
 app.listen(3016,()=>{
-    console.log("Welcome to Yelcamp on port 3015");
+    console.log(`Welcome to Yelcamp on port ${port}`);
 })
 
 
