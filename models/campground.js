@@ -95,4 +95,3 @@ yelpSchema.post('findOneAndDelete' , async ( doc) =>{
 
 const YelpCamp = mongoose.model('YelpCamp', yelpSchema);
 module.exports = YelpCamp
-
