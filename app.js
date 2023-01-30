@@ -210,8 +210,9 @@ app.use ((err,req,res,next) =>{
 })
 
 
-const port = process.env.PORT || 3000
-app.listen(3016,()=>{
+const port = process.env.PORT || 3016;
+console.log(`the port is ${port}`)
+app.listen(port,()=>{
     console.log(`Welcome to Yelcamp on port ${port}`);
 })
 
